@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alfin — Personal Profile | ᎪᏞᎰᏆᏁ #18</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            rcb: {
+              red: '#EC1C24',
+              darkRed: '#8B0000',
+              gold: '#D4AF37',
+              lightGold: '#F3D06B',
+              charcoal: '#090A0E',
+              surface: '#12151E',
+              card: 'rgba(18, 21, 30, 0.82)',
+            }
+          },
+          boxShadow: {
+            'rcb-glow': '0 0 25px rgba(236, 28, 36, 0.45), 0 0 10px rgba(212, 175, 55, 0.25)',
+            'gold-glow': '0 0 20px rgba(212, 175, 55, 0.35)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #090A0E;
+      color: #F9FAFB;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Background Layering & Ambient Stadium Canvas */
+    #stadium-bg-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: -3;
+      background: radial-gradient(circle at 50% 20%, rgba(236, 28, 36, 0.18) 0%, rgba(9, 10, 14, 0.96) 75%),
+                  linear-gradient(180deg, #090A0E 0%, #15060A 50%, #090A0E 100%);
+      background-size: cover;
+    }
+
+    #stadium-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    /* Glassmorphism Cards */
+    .glass-card {
+      background: rgba(18, 21, 30, 0.82);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+    }
+
+    .gold-gradient-text {
+      background: linear-gradient(135deg, #FFF3C4 0%, #D4AF37 50%, #F3D06B 80%, #B8860B 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .red-gradient-text {
+      background: linear-gradient(135deg, #FF6B6B 0%, #EC1C24 60%, #990000 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .crimson-gold-border {
+      border: 2px solid transparent;
+      background: linear-gradient(#12151E, #12151E) padding-box,
+                  linear-gradient(135deg, #EC1C24, #D4AF37, #EC1C24) border-box;
+    }
+
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-7px); }
+    }
+    .animate-float {
+      animation: floatSlow 4s ease-in-out infinite;
+    }
+
+    @keyframes pulseRing {
+      0% { box-shadow: 0 0 0 0 rgba(236, 28, 36, 0.65); }
+      70% { box-shadow: 0 0 0 16px rgba(236, 28, 36, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(236, 28, 36, 0); }
+    }
+    .pulse-rcb {
+      animation: pulseRing 2.4s infinite;
+    }
+
+    /* Equalizer Sound Indicator */
+    .equalizer-bar {
+      width: 3px;
+      border-radius: 999px;
+      background: linear-gradient(to top, #EC1C24, #F3D06B);
+      animation: eqBounce 0.8s ease-in-out infinite;
+    }
+    .equalizer-bar:nth-child(2) { animation-delay: 0.15s; height: 14px; }
+    .equalizer-bar:nth-child(3) { animation-delay: 0.3s; height: 10px; }
+    .equalizer-bar:nth-child(4) { animation-delay: 0.45s; height: 16px; }
+
+    @keyframes eqBounce {
+      0%, 100% { height: 4px; }
+      50% { height: 18px; }
+    }
+
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #090A0E; }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(#EC1C24, #D4AF37);
+      border-radius: 999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-rcb-red selection:text-white">
+
+  <!-- Background Overlay & Canvas -->
+  <div id="stadium-bg-overlay" aria-hidden="true"></div>
+  <canvas id="stadium-canvas" aria-hidden="true"></canvas>
+
+  <!-- Toast Notification Box -->
+  <div id="toast-box" class="fixed bottom-24 right-5 z-50 hidden max-w-sm glass-card border border-rcb-gold/60 text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 transition-all duration-300">
+    <i class="fa-solid fa-circle-check text-rcb-gold text-lg"></i>
+    <span id="toast-message" class="text-sm font-medium"></span>
+  </div>
+
+  <!-- HEADER / NAVIGATION -->
+  <header class="sticky top-0 z-40 glass-card border-b border-rcb-gold/25">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+      <!-- Brand Logo & Cherokee Styled Header Name -->
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="relative w-10 h-10 rounded-full border-2 border-rcb-gold overflow-hidden shadow-md group-hover:scale-105 transition-transform bg-rcb-surface flex items-center justify-center shrink-0">
+          <img src="1000251161_2.jpg" alt="Alfin Profile" class="w-full h-full object-cover object-top" onerror="if(!this.dataset.f1){this.dataset.f1='1';this.src='1000251161.jpg';}else if(!this.dataset.f2){this.dataset.f2='1';this.src='https://placehold.co/100x100/12151E/D4AF37?text=A18';}">
+        </div>
+        <div class="flex flex-col">
+          <span class="font-extrabold text-lg sm:text-xl tracking-wider gold-gradient-text leading-none">ᎪᏞᎰᏆᏁ</span>
+          <span class="text-[10px] sm:text-[11px] uppercase tracking-widest text-gray-400 font-semibold mt-0.5">ᎡᏟᏴ #18 • ᎪᏚᎳᏆᏁ</span>
+        </div>
+      </a>
+
+      <!-- Navigation & Audio Control Button -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <a href="#about" class="hidden md:inline-block text-sm font-medium text-gray-300 hover:text-rcb-gold px-3 py-1.5 rounded-lg transition">About</a>
+        <a href="#highlights" class="hidden md:inline-block text-sm font-medium text-gray-300 hover:text-rcb-gold px-3 py-1.5 rounded-lg transition">Highlights</a>
+        <a href="https://www.instagram.com/alfi_n6070?cnvx=cjNmYTR0bTFycTZm" target="_blank" rel="noopener noreferrer" class="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-gray-200 hover:text-white bg-white/5 hover:bg-rcb-red/80 border border-white/10 px-3 py-1.5 rounded-lg transition">
+          <i class="fa-brands fa-instagram text-rcb-gold"></i>
+          <span>@alfi_n6070</span>
+        </a>
+
+        <!-- Gentle Ambient Beat Toggle Button -->
+        <button id="musicToggleBtn" onclick="toggleLightBeat()" class="flex items-center gap-2 bg-gradient-to-r from-rcb-red to-rcb-darkRed hover:from-red-500 hover:to-rcb-red text-white text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-xl shadow-rcb-glow transition cursor-pointer">
+          <span id="eqIcon" class="flex items-end gap-[2px] h-4 opacity-40">
+            <span class="equalizer-bar h-2"></span>
+            <span class="equalizer-bar h-3"></span>
+            <span class="equalizer-bar h-2"></span>
+            <span class="equalizer-bar h-4"></span>
+          </span>
+          <span id="musicBtnLabel">Play Light Beat</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="flex-grow">
+    <!-- HERO SECTION -->
+    <section class="relative pt-8 pb-12 sm:pt-14 sm:pb-20 px-4 sm:px-6">
+      <div class="max-w-5xl mx-auto">
+        <div class="glass-card crimson-gold-border rounded-3xl p-6 sm:p-10 md:p-12 shadow-2xl relative overflow-hidden">
+          <!-- Background Glow Orbs -->
+          <div class="absolute -top-24 -right-24 w-72 h-72 bg-rcb-red/25 rounded-full blur-3xl pointer-events-none"></div>
+          <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-rcb-gold/20 rounded-full blur-3xl pointer-events-none"></div>
+
+          <div class="relative z-10 flex flex-col md:flex-row items-center gap-8 md:gap-10">
+            <!-- Hero Profile Avatar Badge -->
+            <div class="flex flex-col items-center shrink-0">
+              <div class="relative animate-float">
+                <div class="w-36 h-36 sm:w-44 sm:h-44 rounded-full p-1 bg-gradient-to-tr from-rcb-red via-rcb-gold to-rcb-lightGold pulse-rcb shadow-2xl">
+                  <div class="w-full h-full rounded-full bg-rcb-surface flex items-center justify-center overflow-hidden relative">
+                    <img id="heroAvatarImg" src="1000251161_2.jpg" alt="Alfin Profile Photo" class="w-full h-full object-cover object-top rounded-full" onerror="if(!this.dataset.f1){this.dataset.f1='1';this.src='1000251161.jpg';}else if(!this.dataset.f2){this.dataset.f2='1';this.src='https://placehold.co/300x300/12151E/D4AF37?text=A18';}">
+                  </div>
+                </div>
+                <span class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-gradient-to-r from-rcb-red to-red-700 text-white text-xs font-extrabold px-4 py-1 rounded-full border border-rcb-gold shadow-lg tracking-widest whitespace-nowrap">
+                  #18 RCB
+                </span>
+              </div>
+
+              <a href="https://www.instagram.com/alfi_n6070?cnvx=cjNmYTR0bTFycTZm" target="_blank" rel="noopener noreferrer" class="mt-5 inline-flex items-center gap-2 text-xs font-semibold text-rcb-gold hover:text-white bg-black/40 hover:bg-rcb-red/30 border border-rcb-gold/40 px-3.5 py-1.5 rounded-full transition">
+                <i class="fa-brands fa-instagram"></i>
+                <span>@alfi_n6070</span>
+                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+              </a>
+            </div>
+
+            <!-- Hero Text & Dynamic Age -->
+            <div class="flex-1 text-center md:text-left">
+              <div class="inline-flex items-center gap-2 bg-rcb-red/15 border border-rcb-red/40 text-rcb-lightGold text-xs font-bold uppercase tracking-widest px-3.5 py-1.5 rounded-full mb-4">
+                <i class="fa-solid fa-bolt text-rcb-gold"></i>
+                <span>PLAY BOLD • ᎡᏟᏴ ᎪᎡᎷᎽ • ᎪᏚᎳᏆᏁ</span>
+              </div>
+
+              <h1 class="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-white mb-3">
+                HEY, I'M <span class="gold-gradient-text">ᎪᏞᎰᏆᏁ #18</span>
+              </h1>
+
+              <p class="text-gray-300 text-base sm:text-lg max-w-2xl leading-relaxed mb-6">
+                Born on <span class="text-white font-semibold">13 September 2011</span>. Passionate cricket enthusiast, die-hard fan of <span class="text-rcb-red font-bold">ᎡᏟᏴ ᎪᎡᎷᎽ</span>, inspired by <span class="text-rcb-gold font-bold">ᏉᏆᎡᎪᎢ ᏦᎾᎻᏞᏆ (#18)</span>, and rocking alongside best friend <span class="text-rcb-lightGold font-bold">ᎪᏚᎳᏆᏁ</span>.
+              </p>
+
+              <!-- Live Age & Birthday Cards -->
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+                <div class="bg-black/50 border border-white/10 rounded-2xl p-3.5">
+                  <div class="text-[11px] uppercase tracking-wider text-gray-400 font-semibold">Exact Age</div>
+                  <div id="exactAgeDisplay" class="text-xl sm:text-2xl font-extrabold text-white mt-0.5">15 Years</div>
+                  <div id="ageBreakdownDisplay" class="text-xs text-rcb-gold mt-0.5">Calculating...</div>
+                </div>
+
+                <div class="bg-black/50 border border-white/10 rounded-2xl p-3.5">
+                  <div class="text-[11px] uppercase tracking-wider text-gray-400 font-semibold">Date of Birth</div>
+                  <div class="text-xl sm:text-2xl font-extrabold text-white mt-0.5">13/09/2011</div>
+                  <div class="text-xs text-gray-400 mt-0.5">September 13, 2011</div>
+                </div>
+
+                <div class="bg-black/50 border border-white/10 rounded-2xl p-3.5">
+                  <div class="text-[11px] uppercase tracking-wider text-gray-400 font-semibold">Next Birthday</div>
+                  <div id="nextBirthdayDays" class="text-xl sm:text-2xl font-extrabold text-rcb-lightGold mt-0.5">-- Days</div>
+                  <div id="nextBirthdayDate" class="text-xs text-gray-400 mt-0.5">13 September</div>
+                </div>
+              </div>
+
+              <!-- Quick Badges & Follow Button -->
+              <div class="flex flex-wrap items-center justify-center md:justify-start gap-2.5">
+                <span class="bg-black/40 border border-rcb-gold/30 text-rcb-gold text-xs font-semibold px-3 py-1.5 rounded-xl">🎂 Born 13/09/2011</span>
+                <span class="bg-black/40 border border-rcb-gold/30 text-rcb-gold text-xs font-semibold px-3 py-1.5 rounded-xl">👑 ᏉᏆᎡᎪᎢ ᏦᎾᎻᏞᏆ Fan</span>
+                <span class="bg-black/40 border border-rcb-gold/30 text-rcb-gold text-xs font-semibold px-3 py-1.5 rounded-xl">🛡️ ᎡᏟᏴ ᎪᎡᎷᎽ</span>
+                <span class="bg-black/40 border border-rcb-gold/30 text-rcb-gold text-xs font-semibold px-3 py-1.5 rounded-xl">🤝 ᎪᏚᎳᏆᏁ</span>
+              </div>
+
+              <div class="mt-6 flex flex-wrap items-center justify-center md:justify-start gap-3">
+                <a href="https://www.instagram.com/alfi_n6070?cnvx=cjNmYTR0bTFycTZm" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-gradient-to-r from-rcb-red to-red-700 hover:from-red-500 hover:to-rcb-red text-white font-semibold px-5 py-3 rounded-xl shadow-rcb-glow transition transform hover:-translate-y-0.5">
+                  <i class="fa-brands fa-instagram text-lg"></i>
+                  <span>Follow @alfi_n6070</span>
+                </a>
+                <a href="#highlights" class="inline-flex items-center gap-2 bg-white/5 hover:bg-white/10 text-rcb-gold border border-rcb-gold/40 font-semibold px-5 py-3 rounded-xl transition">
+                  <i class="fa-solid fa-fire"></i>
+                  <span>Explore Highlights</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SOUND CONTROL BAR -->
+    <section class="px-4 sm:px-6 pb-10">
+      <div class="max-w-5xl mx-auto glass-card rounded-2xl p-4 sm:p-5 border border-rcb-gold/25 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3.5 w-full sm:w-auto">
+          <div class="w-11 h-11 rounded-xl bg-rcb-red/20 border border-rcb-red/50 flex items-center justify-center text-rcb-gold shrink-0">
+            <i class="fa-solid fa-music text-lg"></i>
+          </div>
+          <div>
+            <div class="text-xs uppercase tracking-wider text-rcb-gold font-bold">Ambient Sound</div>
+            <div id="audioTrackName" class="text-sm font-semibold text-white">Gentle Web Audio Chime & Beat Loop</div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+          <div class="flex items-center gap-2 bg-black/40 px-3 py-2 rounded-xl border border-white/10">
+            <i class="fa-solid fa-volume-high text-xs text-rcb-gold"></i>
+            <input id="volumeSlider" type="range" min="0" max="1" step="0.05" value="0.75" oninput="changeVolume(this.value)" class="w-24 accent-red-500 cursor-pointer" aria-label="Volume">
+          </div>
+          <button onclick="toggleLightBeat()" class="bg-white/10 hover:bg-white/20 text-rcb-gold border border-rcb-gold/40 font-semibold text-xs px-4 py-2.5 rounded-xl transition">
+            Toggle Chime
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- HIGHLIGHTS GRID SECTION -->
+    <section id="highlights" class="px-4 sm:px-6 py-10">
+      <div class="max-w-5xl mx-auto">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <span class="text-xs uppercase tracking-widest text-rcb-gold font-bold">Identity & Passion</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">PROFILE HIGHLIGHTS</h2>
+          </div>
+          <span class="text-xs font-bold text-rcb-red bg-rcb-red/15 border border-rcb-red/40 px-3 py-1 rounded-full">#18 FOREVER</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <!-- Date of Birth Card -->
+          <div class="glass-card rounded-2xl p-6 border border-white/10 hover:border-rcb-gold/50 transition group">
+            <div class="w-12 h-12 rounded-2xl bg-rcb-gold/15 border border-rcb-gold/40 flex items-center justify-center text-rcb-gold text-xl mb-4 group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-cake-candles"></i>
+            </div>
+            <h3 class="font-bold text-lg text-white">DATE OF BIRTH</h3>
+            <p class="text-2xl font-extrabold gold-gradient-text mt-1">13 September 2011</p>
+            <p id="dobCardSub" class="text-sm text-gray-400 mt-2">15 years of energy, passion, and big dreams.</p>
+          </div>
+
+          <!-- Cricket Passion Card -->
+          <div class="glass-card rounded-2xl p-6 border border-white/10 hover:border-rcb-gold/50 transition group">
+            <div class="w-12 h-12 rounded-2xl bg-rcb-red/20 border border-rcb-red/40 flex items-center justify-center text-rcb-red text-xl mb-4 group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-baseball-bat-ball"></i>
+            </div>
+            <h3 class="font-bold text-lg text-white">CRICKET PASSION</h3>
+            <p class="text-xl font-bold text-white mt-1">Game Day Mindset</p>
+            <p class="text-sm text-gray-400 mt-2">Every match, every chase, and every last-ball thriller keeps the adrenaline high.</p>
+          </div>
+
+          <!-- Virat Kohli #18 Card -->
+          <div class="glass-card rounded-2xl p-6 border border-white/10 hover:border-rcb-gold/50 transition group">
+            <div class="w-12 h-12 rounded-2xl bg-rcb-gold/15 border border-rcb-gold/40 flex items-center justify-center text-rcb-lightGold text-xl mb-4 group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-crown"></i>
+            </div>
+            <h3 class="font-bold text-lg text-white">ᏉᏆᎡᎪᎢ ᏦᎾᎻᏞᏆ • #18</h3>
+            <p class="text-xl font-bold text-rcb-gold mt-1">The King's Legacy</p>
+            <p class="text-sm text-gray-400 mt-2">Relentless intensity, classic cover drives, and chasing targets with unmatched grit.</p>
+          </div>
+
+          <!-- RCB Loyalty Card -->
+          <div class="glass-card rounded-2xl p-6 border border-white/10 hover:border-rcb-gold/50 transition group">
+            <div class="w-12 h-12 rounded-2xl bg-rcb-red/20 border border-rcb-red/40 flex items-center justify-center text-rcb-red text-xl mb-4 group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h3 class="font-bold text-lg text-white">ᎡᏟᏴ ᎪᎡᎷᎽ</h3>
+            <p class="text-xl font-bold text-white mt-1">Red & Gold Pride</p>
+            <p class="text-sm text-gray-400 mt-2">Standing loud under stadium floodlights with unbreakable loyalty to RCB.</p>
+          </div>
+
+          <!-- Best Friend Aswin Card -->
+          <div class="glass-card rounded-2xl p-6 border border-white/10 hover:border-rcb-gold/50 transition group">
+            <div class="w-12 h-12 rounded-2xl bg-rcb-gold/15 border border-rcb-gold/40 flex items-center justify-center text-rcb-gold text-xl mb-4 group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-user-group"></i>
+            </div>
+            <h3 class="font-bold text-lg text-white">BEST FRIEND</h3>
+            <p class="text-2xl font-extrabold gold-gradient-text mt-1">ᎪᏚᎳᏆᏁ</p>
+            <p class="text-sm text-gray-400 mt-2">Day-one partner for cricket debates, laughs, and unforgettable memories.</p>
+          </div>
+
+          <!-- Instagram Connect Card -->
+          <div id="instagram" class="glass-card rounded-2xl p-6 border border-rcb-gold/30 hover:border-rcb-gold transition group">
+            <div class="flex items-center gap-3.5 mb-4">
+              <div class="w-12 h-12 rounded-full border-2 border-rcb-gold overflow-hidden bg-rcb-surface shrink-0">
+                <img src="1000251161_2.jpg" alt="Alfin Instagram" class="w-full h-full object-cover object-top" onerror="if(!this.dataset.f1){this.dataset.f1='1';this.src='1000251161.jpg';}else if(!this.dataset.f2){this.dataset.f2='1';this.src='https://placehold.co/120x120/12151E/D4AF37?text=A18';}">
+              </div>
+              <div>
+                <h3 class="font-bold text-lg text-white">INSTAGRAM</h3>
+                <p class="text-sm font-semibold text-rcb-gold">@alfi_n6070</p>
+              </div>
+            </div>
+            <p class="text-sm text-gray-400 mb-4">Connect directly on Instagram for updates, reels, and cricket vibes.</p>
+            <a href="https://www.instagram.com/alfi_n6070?cnvx=cjNmYTR0bTFycTZm" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider bg-rcb-red hover:bg-red-500 text-white px-4 py-2.5 rounded-xl transition">
+              <i class="fa-brands fa-instagram"></i>
+              <span>Open Profile</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section id="about" class="px-4 sm:px-6 pb-14">
+      <div class="max-w-5xl mx-auto glass-card rounded-3xl p-6 sm:p-8 border border-white/10">
+        <span class="text-xs uppercase tracking-widest text-rcb-gold font-bold">About</span>
+        <h2 class="text-2xl font-extrabold text-white mt-1 mb-3">ABOUT ᎪᏞᎰᏆᏁ</h2>
+        <p class="text-gray-300 leading-relaxed text-sm sm:text-base">
+          Hey! I'm <span class="text-white font-semibold">ᎪᏞᎰᏆᏁ</span>, born on <span class="text-rcb-gold font-semibold">13/09/2011</span>. Cricket runs in my veins—especially cheering for <span class="text-rcb-red font-semibold">ᎡᏟᏴ ᎪᎡᎷᎽ</span> and watching <span class="text-rcb-gold font-semibold">ᏉᏆᎡᎪᎢ ᏦᎾᎻᏞᏆ (#18)</span> dominate the crease. Alongside my best friend <span class="text-rcb-lightGold font-semibold">ᎪᏚᎳᏆᏁ</span>, every game day feels like a stadium celebration.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER WITH NEXO TEAM CREDITS -->
+  <footer class="glass-card border-t border-rcb-gold/25 py-8 px-4 sm:px-6 mt-auto">
+    <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+      <div>
+        <div class="font-bold text-base gold-gradient-text">ᎪᏞᎰᏆᏁ • ᎡᏟᏴ #18 • ᎪᏚᎳᏆᏁ</div>
+        <p class="text-xs text-gray-400 mt-1">Crafted with passion • Born 13/09/2011</p>
+      </div>
+
+      <!-- NEXO TEAM DEVELOPER CREDITS -->
+      <div class="flex flex-col items-center sm:items-end gap-2">
+        <span class="text-xs text-gray-300 font-semibold">Developed by <span class="text-rcb-gold font-bold">Nexo Team</span></span>
+        <div class="flex items-center gap-2.5">
+          <a href="https://www.instagram.com/nexoxdev?bqrl=dHRkNDh3cDlsOTNr" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-200 hover:text-white bg-white/5 hover:bg-rcb-red/80 border border-white/10 px-3 py-1.5 rounded-lg transition">
+            <i class="fa-brands fa-instagram text-rcb-gold"></i>
+            <span>@nexoxdev</span>
+          </a>
+          <a href="https://t.me/NexoDeveloper" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-200 hover:text-white bg-white/5 hover:bg-rcb-red/80 border border-white/10 px-3 py-1.5 rounded-lg transition">
+            <i class="fa-brands fa-telegram text-rcb-gold"></i>
+            <span>t.me/NexoDeveloper</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // Safe Toast Helper
+    function showToast(msg) {
+      try {
+        const box = document.getElementById('toast-box');
+        const text = document.getElementById('toast-message');
+        if (!box || !text) return;
+        text.innerText = msg;
+        box.classList.remove('hidden');
+        clearTimeout(window.__toastTimer);
+        window.__toastTimer = setTimeout(() => {
+          box.classList.add('hidden');
+        }, 3000);
+      } catch (e) {}
+    }
+
+    // 1. EXACT AGE & BIRTHDAY CALCULATOR (DOB: 13/09/2011)
+    function updateAgeStats() {
+      try {
+        const birthDate = new Date(2011, 8, 13); // Month 8 is September
+        const now = new Date();
+
+        let years = now.getFullYear() - birthDate.getFullYear();
+        let months = now.getMonth() - birthDate.getMonth();
+        let days = now.getDate() - birthDate.getDate();
+
+        if (days < 0) {
+          const prevMonthLastDay = new Date(now.getFullYear(), now.getMonth(), 0).getDate();
+          days += prevMonthLastDay;
+          months -= 1;
+        }
+        if (months < 0) {
+          months += 12;
+          years -= 1;
+        }
+
+        const ageEl = document.getElementById('exactAgeDisplay');
+        const breakdownEl = document.getElementById('ageBreakdownDisplay');
+        const dobSubEl = document.getElementById('dobCardSub');
+
+        if (ageEl) ageEl.innerText = `${years} Years`;
+        if (breakdownEl) breakdownEl.innerText = `${months}m ${days}d old`;
+        if (dobSubEl) dobSubEl.innerText = `${years} years, ${months} months & ${days} days of energy.`;
+
+        // Next Birthday Countdown
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        let nextBday = new Date(now.getFullYear(), 8, 13);
+        if (nextBday < todayStart) {
+          nextBday = new Date(now.getFullYear() + 1, 8, 13);
+        }
+        const diffDays = Math.round((nextBday - todayStart) / (1000 * 60 * 60 * 24));
+
+        const bdayDaysEl = document.getElementById('nextBirthdayDays');
+        const bdayDateEl = document.getElementById('nextBirthdayDate');
+        if (bdayDaysEl) {
+          bdayDaysEl.innerText = diffDays === 0 ? 'Today!' : `${diffDays} Days`;
+        }
+        if (bdayDateEl) {
+          bdayDateEl.innerText = `13 Sep ${nextBday.getFullYear()}`;
+        }
+      } catch (e) {}
+    }
+
+    // 2. ANIMATED STADIUM CANVAS BACKGROUND
+    function initStadiumCanvas() {
+      try {
+        const canvas = document.getElementById('stadium-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        let width = (canvas.width = window.innerWidth);
+        let height = (canvas.height = window.innerHeight);
+
+        const particles = Array.from({ length: 35 }, () => ({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          r: Math.random() * 2.2 + 0.8,
+          vx: (Math.random() - 0.5) * 0.5,
+          vy: -Math.random() * 0.7 - 0.2,
+          alpha: Math.random() * 0.6 + 0.2,
+          gold: Math.random() > 0.5
+        }));
+
+        let angle = 0;
+
+        function resize() {
+          width = canvas.width = window.innerWidth;
+          height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+
+        function draw() {
+          ctx.clearRect(0, 0, width, height);
+
+          // Rotating floodlight beams
+          angle += 0.003;
+          for (let i = 0; i < 2; i++) {
+            const originX = i === 0 ? width * 0.15 : width * 0.85;
+            const sweep = Math.sin(angle + i * 2) * 0.35 + (i === 0 ? 0.55 : -0.55);
+
+            ctx.save();
+            ctx.translate(originX, 0);
+            ctx.rotate(sweep);
+            const grad = ctx.createLinearGradient(0, 0, 0, height * 0.9);
+            grad.addColorStop(0, 'rgba(212, 175, 55, 0.14)');
+            grad.addColorStop(0.5, 'rgba(236, 28, 36, 0.05)');
+            grad.addColorStop(1, 'rgba(9, 10, 14, 0)');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.moveTo(-30, 0);
+            ctx.lineTo(30, 0);
+            ctx.lineTo(height * 0.45, height * 0.9);
+            ctx.lineTo(-height * 0.45, height * 0.9);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+          }
+
+          // Floating embers
+          for (const p of particles) {
+            p.x += p.vx;
+            p.y += p.vy;
+            if (p.y < -10) {
+              p.y = height + 10;
+              p.x = Math.random() * width;
+            }
+            if (p.x < -10) p.x = width + 10;
+            if (p.x > width + 10) p.x = -10;
+
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = p.gold
+              ? `rgba(243, 208, 107, ${p.alpha})`
+              : `rgba(236, 28, 36, ${p.alpha})`;
+            ctx.fill();
+          }
+
+          requestAnimationFrame(draw);
+        }
+        draw();
+      } catch (e) {}
+    }
+
+    // 3. LIGHTWEIGHT WEB AUDIO SYNTH / CHIME BEAT
+    let isPlaying = false;
+    let audioCtx = null;
+    let synthTimer = null;
+
+    function setPlayingUI(playing) {
+      isPlaying = playing;
+      const labelEl = document.getElementById('musicBtnLabel');
+      const eqEl = document.getElementById('eqIcon');
+      if (labelEl) labelEl.innerText = playing ? 'Pause Light Beat' : 'Play Light Beat';
+      if (eqEl) {
+        if (playing) eqEl.classList.remove('opacity-40');
+        else eqEl.classList.add('opacity-40');
+      }
+    }
+
+    function changeVolume(val) {
+      try {
+        const num = parseFloat(val);
+        if (audioCtx && audioCtx.gainNode) {
+          audioCtx.gainNode.gain.setValueAtTime(num, audioCtx.currentTime);
+        }
+      } catch (e) {}
+    }
+
+    function toggleLightBeat() {
+      if (isPlaying) {
+        stopLightBeat();
+      } else {
+        startLightBeat();
+      }
+    }
+
+    function startLightBeat() {
+      try {
+        if (!audioCtx) {
+          const Ctx = window.AudioContext || window.webkitAudioContext;
+          if (!Ctx) return;
+          audioCtx = new Ctx();
+          audioCtx.gainNode = audioCtx.createGain();
+          const volVal = parseFloat(document.getElementById('volumeSlider').value || 0.75);
+          audioCtx.gainNode.gain.value = volVal;
+          audioCtx.gainNode.connect(audioCtx.destination);
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+
+        const notes = [293.66, 369.99, 440.00, 587.33, 440.00, 369.99, 493.88, 587.33];
+        let step = 0;
+
+        if (synthTimer) clearInterval(synthTimer);
+
+        setPlayingUI(true);
+        showToast('Gentle ambient beat playing');
+
+        synthTimer = setInterval(() => {
+          if (!isPlaying || !audioCtx) return;
+          const now = audioCtx.currentTime;
+
+          // Main note
+          const osc = audioCtx.createOscillator();
+          const g = audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(notes[step % notes.length], now);
+          g.gain.setValueAtTime(0.12, now);
+          g.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+          osc.connect(g);
+          g.connect(audioCtx.gainNode);
+          osc.start(now);
+          osc.stop(now + 0.36);
+
+          // Subtle rhythm tick
+          if (step % 2 === 0) {
+            const tick = audioCtx.createOscillator();
+            const tickG = audioCtx.createGain();
+            tick.type = 'sine';
+            tick.frequency.setValueAtTime(120, now);
+            tickG.gain.setValueAtTime(0.04, now);
+            tickG.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+            tick.connect(tickG);
+            tickG.connect(audioCtx.gainNode);
+            tick.start(now);
+            tick.stop(now + 0.09);
+          }
+
+          step++;
+        }, 320);
+      } catch (e) {}
+    }
+
+    function stopLightBeat() {
+      setPlayingUI(false);
+      if (synthTimer) {
+        clearInterval(synthTimer);
+        synthTimer = null;
+      }
+    }
+
+    // INITIALIZATION
+    window.addEventListener('DOMContentLoaded', () => {
+      updateAgeStats();
+      initStadiumCanvas();
+    });
+  </script>
+</body>
+</html>
