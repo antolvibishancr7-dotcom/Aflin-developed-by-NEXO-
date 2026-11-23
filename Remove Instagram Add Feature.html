@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alfin | #18 RCB Profile</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;0,800;0,900;1,800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Tailwind Custom Configuration -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Montserrat', 'sans-serif'],
+          },
+          colors: {
+            rcb: {
+              red: '#EC1C24',
+              darkred: '#7A0B10',
+              gold: '#D4AF37',
+              goldbright: '#F5D77F',
+              dark: '#090A0E',
+              surface: '#11141D',
+              card: '#161B27',
+              cardhover: '#1F2637',
+              border: 'rgba(212, 175, 55, 0.25)'
+            }
+          },
+          boxShadow: {
+            'gold-glow': '0 0 25px rgba(212, 175, 55, 0.35)',
+            'red-glow': '0 0 25px rgba(236, 28, 36, 0.4)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #090A0E;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #161B27;
+      border-radius: 4px;
+      border: 1px solid rgba(212, 175, 55, 0.3);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #EC1C24;
+    }
+
+    /* Stadium Light Radial Gradient Pattern */
+    .stadium-bg {
+      background-color: #090A0E;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(236, 28, 36, 0.25) 0%, transparent 45%),
+        radial-gradient(circle at 85% 20%, rgba(212, 175, 55, 0.18) 0%, transparent 40%),
+        radial-gradient(circle at 50% 85%, rgba(236, 28, 36, 0.15) 0%, transparent 50%);
+    }
+
+    /* Gold & Red Gradient Typography */
+    .text-gold-gradient {
+      background: linear-gradient(135deg, #FFF099 0%, #D4AF37 50%, #A07D1C 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .text-red-gradient {
+      background: linear-gradient(135deg, #FF6B72 0%, #EC1C24 60%, #800A0F 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Glassmorphism Card Styling */
+    .glass-card {
+      background: rgba(22, 27, 39, 0.78);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(212, 175, 55, 0.4);
+      transform: translateY(-2px);
+    }
+
+    /* Animated Fullscreen Canvas Background */
+    #bgCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Music Equalizer Visualizer Bars */
+    @keyframes eqPulse {
+      0%, 100% { height: 4px; }
+      50% { height: 16px; }
+    }
+    .eq-bar {
+      width: 3px;
+      background-color: #D4AF37;
+      border-radius: 2px;
+      height: 4px;
+      transition: height 0.2s ease;
+    }
+    .playing .eq-bar:nth-child(1) { animation: eqPulse 0.5s infinite ease-in-out; }
+    .playing .eq-bar:nth-child(2) { animation: eqPulse 0.35s infinite ease-in-out 0.1s; }
+    .playing .eq-bar:nth-child(3) { animation: eqPulse 0.65s infinite ease-in-out 0.2s; }
+    .playing .eq-bar:nth-child(4) { animation: eqPulse 0.45s infinite ease-in-out 0.15s; }
+
+    /* Pulse Glow Animation */
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.03); }
+    }
+    .animate-pulse-glow {
+      animation: pulseGlow 3s infinite ease-in-out;
+    }
+  </style>
+</head>
+
+<body class="stadium-bg text-gray-100 min-h-screen font-sans selection:bg-rcb-red selection:text-white flex flex-col justify-between relative overflow-x-hidden">
+
+  <!-- Fullscreen Animated Stadium Background Canvas -->
+  <canvas id="bgCanvas"></canvas>
+
+  <!-- Toast Notification Overlay -->
+  <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
+  <!-- Header Navigation Bar -->
+  <header class="sticky top-0 z-40 bg-rcb-dark/90 backdrop-blur-md border-b border-rcb-border/40 shadow-lg">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+      
+      <!-- Logo Branding linking to Instagram -->
+      <a href="https://www.instagram.com/alfi_n6070?cnvx=cjNmYTR0bTFycTZm" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 via-pink-600 to-rcb-red border border-rcb-gold/50 flex items-center justify-center shadow-red-glow text-white text-xl group-hover:scale-105 transition-transform">
+          <i class="fa-brands fa-instagram"></i>
+        </div>
+        <div>
+          <span class="font-display font-black text-xl tracking-tight text-white block leading-none">
+            ALFIN <span class="text-rcb-gold text-xs font-semibold tracking-wider">@alfi_n6070</span>
+          </span>
+          <span class="text-[10px] text-gray-400 font-medium uppercase tracking-widest">Instagram &bull; RCB #18</span>
+        </div>
+      </a>
+
+      <!-- Navigation Links -->
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
+        <a href="#stats" class="text-gray-300 hover:text-rcb-gold transition-colors flex items-center gap-1.5">
+          <i class="fa-solid fa-star text-xs text-rcb-gold"></i> Highlights
+        </a>
+        <a href="#about" class="text-gray-300 hover:text-rcb-gold transition-colors flex items-center gap-1.5">
+          <i class="fa-solid fa-user text-xs text-rcb-red"></i> About
+        </a>
+        <a href="#instagram" class="text-gray-300 hover:text-rcb-gold transition-colors flex items-center gap-1.5">
+          <i class="fa-brands fa-instagram text-xs text-pink-500"></i> Instagram
+        </a>
+      </nav>
+
+      <!-- Music Player & Instagram CTA Buttons -->
+      <div class="flex items-center gap-2.5">
+        <button 
+          id="bgMusicToggle" 
+          onclick="toggleBgMusic()"
+          title="Toggle Stadium Background Music"
+          class="bg-rcb-card hover:bg-rcb-cardhover border border-rcb-gold/40 text-rcb-gold px-3.5 py-2 rounded-full text-xs font-bold flex items-center gap-2 transition-all shadow-md active:scale-95"
+        >
+          <i id="musicIcon" class="fa-solid fa-play text-[11px]"></i>
+          <span class="hidden sm:inline" id="musicLabel">Anthem</span>
+          <div id="musicEqualizer" class="flex items-end gap-0.5 h-4">
+            <span class="eq-bar"></span>
+            <span class="eq-bar"></span>
+            <span class="eq-bar"></span>
+            <span class="eq-bar"></span>
+          </div>
+        </button>
+
+        <a 
+          href="https://www.instagram.com/alfi_n6070?cnvx=cjNmYTR0bTFycTZm" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="flex items-center gap-2 bg-gradient-to-r from-purple-600 via-pink-600 to-rcb-red hover:from-purple-500 hover:to-rcb-red text-white text-xs md:text-sm font-bold px-4 py-2 rounded-full shadow-lg hover:shadow-pink-500/25 transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+        >
+          <i class="fa-brands fa-instagram text-base"></i>
+          <span>@alfi_n6070</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Website Content -->
+  <main class="relative z-10 max-w-5xl mx-auto px-4 py-8 space-y-10 flex-grow w-full">
+
+    <!-- HERO PROFILE BANNER SECTION -->
+    <section class="relative rounded-3xl overflow-hidden glass-card border border-rcb-gold/30 p-6 md:p-10 shadow-2xl">
+      <!-- Background Lions Decorative Watermark -->
+      <div class="absolute -right-10 -bottom-10 opacity-10 text-rcb-gold pointer-events-none select-none">
+        <i class="fa-solid fa-shield-cat text-[280px]"></i>
+      </div>
+      <div class="absolute top-0 right-0 w-64 h-64 bg-rcb-red/20 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="relative z-10 flex flex-col md:flex-row items-center gap-8 md:gap-12">
+        
+        <!-- Interactive Avatar Profile Display -->
+        <div class="flex flex-col items-center gap-3">
+          <div class="relative group">
+            <div class="absolute -inset-1.5 bg-gradient-to-r from-rcb-red via-rcb-gold to-rcb-red rounded-full blur opacity-75 group-hover:opacity-100 transition duration-500 animate-pulse-glow"></div>
+            
+            <a href="https://www.instagram.com/alfi_n6070?cnvx=cjNmYTR0bTFycTZm" target="_blank" rel="noopener noreferrer" id="avatarContainer" title="Open @alfi_n6070 on Instagram" class="relative w-36 h-36 md:w-44 md:h-44 rounded-full bg-gradient-to-br from-purple-700 via-pink-600 to-rcb-surface border-4 border-rcb-gold flex flex-col items-center justify-center overflow-hidden shadow-2xl transition-all hover:scale-105">
+              <div id="avatarText" class="flex flex-col items-center justify-center text-center px-2">
+                <i class="fa-brands fa-instagram text-4xl md:text-5xl text-white drop-shadow-md mb-1"></i>
+                <span class="font-display font-extrabold text-xs md:text-sm text-rcb-gold tracking-tight">@alfi_n6070</span>
+              </div>
+              <img id="customAvatarImg" class="hidden w-full h-full object-cover" alt="Alfin Profile Photo">
+            </a>
+
+            <!-- Camera Upload Icon -->
+            <label for="avatarUploadInput" title="Upload Custom Photo" class="absolute bottom-1 right-1 bg-rcb-red hover:bg-red-600 text-white w-10 h-10 rounded-full border-2 border-rcb-gold flex items-center justify-center cursor-pointer shadow-lg hover:scale-110 transition-transform">
+              <i class="fa-solid fa-camera text-sm"></i>
+              <input type="file" id="avatarUploadInput" accept="image/*" class="hidden">
+            </label>
+          </div>
+
+          <!-- Quick Avatar Presets -->
+          <div class="flex items-center gap-1.5 bg-rcb-dark/80 px-3 py-1.5 rounded-full border border-rcb-border text-[11px] font-medium text-gray-300">
+            <span>Style:</span>
+            <button onclick="setAvatarPreset('insta')" class="hover:text-rcb-gold px-1.5 py-0.5 rounded bg-rcb-card flex items-center gap-1"><i class="fa-brands fa-instagram text-pink-400"></i> IG</button>
+            <button onclick="setAvatarPreset('cricket')" class="hover:text-rcb-gold px-1.5 py-0.5 rounded hover:bg-rcb-card">🏏</button>
+            <button onclick="setAvatarPreset('lion')" class="hover:text-rcb-gold px-1.5 py-0.5 rounded hover:bg-rcb-card">🦁</button>
+            <button onclick="setAvatarPreset('crown')" class="hover:text-rcb-gold px-1.5 py-0.5 rounded hover:bg-rcb-card">👑</button>
+          </div>
+        </div>
+
+        <!-- Hero Text & Quick Info -->
+        <div class="flex-1 text-center md:text-left space-y-4">
+          <div class="inline-flex items-center gap-2 bg-rcb-red/15 border border-rcb-red/40 text-rcb-gold px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+            <span class="w-2 h-2 rounded-full bg-rcb-red animate-ping"></span>
+            Play Bold &bull; Official Profile
+          </div>
+
+          <h1 class="font-display font-black text-4xl sm:text-5xl lg:text-6xl tracking-tight text-white">
+            ALFIN <span class="text-gold-gradient">#18</span>
+          </h1>
+
+          <p class="text-gray-300 text-sm sm:text-base max-w-2xl leading-relaxed">
+            Cricket enthusiast, proud Royal Challengers Bengaluru fan, and dedicated follower of 
+            <strong class="text-rcb-gold font-semibold">Virat Kohli</strong>. Inspired by #18 excellence.
+          </p>
+
+          <!-- Badges Pill List -->
+          <div class="flex flex-wrap justify-center md:justify-start gap-2 pt-2">
+            <span class="bg-rcb-card border border-rcb-border text-gray-200 text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+              <i class="fa-solid fa-cake-candles text-rcb-gold"></i> Born 13/09/2011
+            </span>
+            <span class="bg-rcb-card border border-rcb-border text-gray-200 text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+              <i class="fa-solid fa-hashtag text-rcb-gold"></i> Lucky #18
+            </span>
+            <span class="bg-rcb-card border border-rcb-border text-gray-200 text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+              <i class="fa-solid fa-crown text-rcb-gold"></i> King Kohli Fan
+            </span>
+            <span class="bg-rcb-card border border-rcb-border text-gray-200 text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+              <i class="fa-solid fa-shield-halved text-rcb-red"></i> RCB Army
+            </span>
+          </div>
+
+          <!-- Action CTA Buttons -->
+          <div class="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-4">
+            <a 
+              href="https://www.instagram.com/alfi_n6070?cnvx=cjNmYTR0bTFycTZm" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="bg-gradient-to-r from-purple-600 via-pink-600 to-rcb-red hover:from-purple-500 hover:to-rcb-red text-white font-bold px-6 py-3 rounded-xl border border-rcb-gold/30 shadow-lg shadow-pink-600/25 flex items-center gap-2.5 transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+            >
+              <i class="fa-brands fa-instagram text-lg"></i>
+              <span>Follow @alfi_n6070</span>
+            </a>
+
+            <button 
+              onclick="toggleBgMusic()"
+              class="bg-rcb-card hover:bg-rcb-cardhover border border-rcb-gold/50 text-rcb-gold font-bold px-5 py-3 rounded-xl flex items-center gap-2 shadow-gold-glow transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+            >
+              <i class="fa-solid fa-music text-rcb-red"></i>
+              <span id="heroMusicBtnText">Play Stadium Anthem</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS & HIGHLIGHT CARDS GRID -->
+    <section id="stats" class="space-y-6">
+      <div class="flex items-center justify-between border-b border-rcb-border/40 pb-3">
+        <div>
+          <h2 class="font-display font-extrabold text-2xl text-white flex items-center gap-2">
+            <i class="fa-solid fa-star text-rcb-gold"></i> Profile Highlights
+          </h2>
+          <p class="text-xs text-gray-400">Key facts and details about Alfin</p>
+        </div>
+        <span class="text-xs text-rcb-gold bg-rcb-gold/10 px-3 py-1 rounded-full border border-rcb-gold/30 font-mono">ID: ALFIN-18-RCB</span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        
+        <!-- CARD 1: Date of Birth & Live Age Calculator -->
+        <div class="glass-card rounded-2xl p-6 relative overflow-hidden group">
+          <div class="absolute top-0 right-0 w-24 h-24 bg-rcb-gold/5 rounded-bl-full pointer-events-none"></div>
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-rcb-red/20 border border-rcb-red/40 flex items-center justify-center text-rcb-red text-xl">
+              <i class="fa-solid fa-calendar-day"></i>
+            </div>
+            <span class="text-[11px] font-semibold tracking-wider text-rcb-gold uppercase bg-rcb-gold/10 px-2.5 py-1 rounded-full border border-rcb-gold/20">
+              DOB
+            </span>
+          </div>
+          <div class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Date of Birth</div>
+          <div class="font-display font-extrabold text-2xl text-white mb-2">13 / 09 / 2011</div>
+          <div class="space-y-1 pt-2 border-t border-gray-700/50">
+            <div class="text-xs text-gray-200 flex justify-between items-center">
+              <span>Exact Age:</span>
+              <strong id="calculatedAge" class="text-rcb-gold font-bold">--</strong>
+            </div>
+            <div class="text-[11px] text-gray-400 flex justify-between items-center">
+              <span>Next Birthday:</span>
+              <span id="bdayCountdown" class="text-rcb-red font-semibold">Calculating...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 2: Hobby -->
+        <div class="glass-card rounded-2xl p-6 relative overflow-hidden group">
+          <div class="absolute top-0 right-0 w-24 h-24 bg-rcb-red/5 rounded-bl-full pointer-events-none"></div>
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-rcb-gold/20 border border-rcb-gold/40 flex items-center justify-center text-rcb-gold text-xl">
+              <i class="fa-solid fa-baseball-bat-ball"></i>
+            </div>
+            <span class="text-[11px] font-semibold tracking-wider text-rcb-red uppercase bg-rcb-red/10 px-2.5 py-1 rounded-full border border-rcb-red/20">
+              Hobby
+            </span>
+          </div>
+          <div class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Favorite Hobby</div>
+          <div class="font-display font-extrabold text-2xl text-white mb-2">Cricket 🏏</div>
+          <p class="text-xs text-gray-300 pt-2 border-t border-gray-700/50">
+            Batting, bowling, watching match highlights, and playing with friends.
+          </p>
+        </div>
+
+        <!-- CARD 3: Lucky Number -->
+        <div class="glass-card rounded-2xl p-6 relative overflow-hidden group border-rcb-gold/40 shadow-gold-glow">
+          <div class="absolute -right-4 -bottom-4 opacity-20 text-rcb-gold pointer-events-none font-display font-black text-8xl">
+            18
+          </div>
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-rcb-gold to-rcb-goldbright text-rcb-dark font-black font-display flex items-center justify-center text-xl shadow-md">
+              #18
+            </div>
+            <span class="text-[11px] font-semibold tracking-wider text-rcb-gold uppercase bg-rcb-gold/20 px-2.5 py-1 rounded-full border border-rcb-gold/40">
+              Lucky #
+            </span>
+          </div>
+          <div class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Lucky Number</div>
+          <div class="font-display font-black text-3xl text-gold-gradient mb-2">NUMBER 18</div>
+          <p class="text-xs text-gray-300 pt-2 border-t border-gray-700/50">
+            The iconic jersey number representing passion, dedication, and leadership.
+          </p>
+        </div>
+
+        <!-- CARD 4: Favorite Player -->
+        <div class="glass-card rounded-2xl p-6 relative overflow-hidden group">
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-rcb-red/20 border border-rcb-red/40 flex items-center justify-center text-rcb-red text-xl">
+              <i class="fa-solid fa-crown"></i>
+            </div>
+            <span class="text-[11px] font-semibold tracking-wider text-rcb-gold uppercase bg-rcb-gold/10 px-2.5 py-1 rounded-full border border-rcb-gold/20">
+              Idol
+            </span>
+          </div>
+          <div class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Favourite Player</div>
+          <div class="font-display font-extrabold text-2xl text-white mb-2">Virat Kohli 👑</div>
+          <div class="text-xs text-gray-300 pt-2 border-t border-gray-700/50 flex items-center justify-between">
+            <span>"King Kohli"</span>
+            <button onclick="showKohliQuote()" class="text-[11px] text-rcb-gold hover:underline font-semibold">Random Quote &rarr;</button>
+          </div>
+        </div>
+
+        <!-- CARD 5: Favorite Team (RCB) -->
+        <div class="glass-card rounded-2xl p-6 relative overflow-hidden group col-span-1 sm:col-span-2 lg:col-span-2 bg-gradient-to-r from-rcb-card via-rcb-surface to-rcb-darkred/20 border-rcb-red/40">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="space-y-2">
+              <div class="flex items-center gap-2">
+                <span class="bg-rcb-red text-white text-[10px] font-black px-2 py-0.5 rounded tracking-wider uppercase">Favourite Team</span>
+                <span class="text-xs text-rcb-gold font-bold">#PlayBold</span>
+              </div>
+              <div class="font-display font-black text-2xl sm:text-3xl text-white">
+                Royal Challengers Bengaluru <span class="text-rcb-red">(RCB)</span>
+              </div>
+              <p class="text-xs text-gray-300 max-w-xl">
+                Red, Black, and Gold forever. Supporting Royal Challengers Bengaluru every match!
+              </p>
+            </div>
+            
+            <div class="flex flex-col items-start sm:items-end gap-1.5 flex-shrink-0">
+              <span class="bg-rcb-red/20 text-rcb-gold font-bold text-xs px-4 py-2 rounded-xl border border-rcb-gold/40 shadow-gold-glow">
+                Ee Sala Cup Namde! 🏆
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ABOUT ALFIN & INSTAGRAM SHOWCASE -->
+    <section id="about" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <!-- Bio Description -->
+      <div class="lg:col-span-2 glass-card rounded-3xl p-6 md:p-8 space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-rcb-gold/20 border border-rcb-gold/40 flex items-center justify-center text-rcb-gold">
+            <i class="fa-solid fa-user"></i>
+          </div>
+          <div>
+            <h2 class="font-display font-extrabold text-xl text-white">About Alfin</h2>
+            <p class="text-xs text-gray-400">Personal summary and background</p>
+          </div>
+        </div>
+
+        <p class="text-gray-300 text-sm leading-relaxed">
+          Welcome to my official profile website! Born on <strong class="text-white font-semibold">September 13, 2011</strong>, 
+          cricket has always been my favorite hobby and passion.
+        </p>
+
+        <p class="text-gray-300 text-sm leading-relaxed">
+          My lucky number is <strong class="text-rcb-gold font-bold">#18</strong>, which comes from my favorite cricketer, 
+          <strong class="text-white font-semibold">Virat Kohli</strong>. I am a die-hard fan of 
+          <strong class="text-rcb-red font-bold">Royal Challengers Bengaluru (RCB)</strong>.
+        </p>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-3">
+          <div class="bg-rcb-dark/80 p-3 rounded-xl border border-rcb-border/40">
+            <span class="text-[10px] text-gray-400 block uppercase font-bold">Hobby</span>
+            <span class="text-xs text-white font-semibold">Cricket 🏏</span>
+          </div>
+          <div class="bg-rcb-dark/80 p-3 rounded-xl border border-rcb-border/40">
+            <span class="text-[10px] text-gray-400 block uppercase font-bold">Lucky Number</span>
+            <span class="text-xs text-rcb-gold font-semibold">#18</span>
+          </div>
+          <div class="bg-rcb-dark/80 p-3 rounded-xl border border-rcb-border/40">
+            <span class="text-[10px] text-gray-400 block uppercase font-bold">Team</span>
+            <span class="text-xs text-rcb-red font-semibold">RCB</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Instagram Embed Section -->
+      <div id="instagram" class="glass-card rounded-3xl p-6 flex flex-col justify-between border-pink-500/40 bg-gradient-to-b from-purple-950/30 via-rcb-card to-rcb-surface">
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-pink-400 tracking-widest uppercase flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-pink-500 animate-ping"></span>
+              <i class="fa-brands fa-instagram text-base"></i> Live Instagram
+            </span>
+            <span class="text-[10px] bg-pink-500/20 text-pink-300 px-2.5 py-0.5 rounded-full border border-pink-500/30 font-semibold">
+              @alfi_n6070
+            </span>
+          </div>
+
+          <!-- Embedded Instagram Profile Iframe -->
+          <div class="relative w-full h-80 rounded-2xl overflow-hidden border border-white/15 bg-white shadow-inner">
+            <iframe 
+              id="igProfileIframe"
+              src="https://www.instagram.com/alfi_n6070/embed" 
+              title="Alfin Live Instagram Profile"
+              class="w-full h-full border-0"
+              loading="lazy"
+              scrolling="yes"
+              allowtransparency="true"
+            ></iframe>
+          </div>
+        </div>
+
+        <a 
+          href="https://www.instagram.com/alfi_n6070?cnvx=cjNmYTR0bTFycTZm" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="mt-4 w-full bg-gradient-to-r from-purple-600 via-pink-600 to-rcb-red hover:from-purple-500 hover:to-rcb-red text-white font-bold text-xs py-3.5 px-4 rounded-xl shadow-lg flex items-center justify-center gap-2 transition-transform active:scale-95"
+        >
+          <i class="fa-brands fa-instagram text-base"></i>
+          <span>Open @alfi_n6070 on Instagram</span>
+          <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+        </a>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="relative z-10 mt-12 bg-rcb-dark/95 border-t border-rcb-border/40 py-8 text-center text-xs text-gray-400 space-y-4">
+    <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <a href="https://www.instagram.com/alfi_n6070?cnvx=cjNmYTR0bTFycTZm" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
+        <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-purple-600 via-pink-600 to-rcb-red text-white text-sm flex items-center justify-center">
+          <i class="fa-brands fa-instagram"></i>
+        </div>
+        <span class="font-display font-bold text-white text-sm">Alfin &bull; @alfi_n6070</span>
+      </a>
+
+      <div class="flex items-center gap-4 text-gray-400">
+        <a href="https://www.instagram.com/alfi_n6070?cnvx=cjNmYTR0bTFycTZm" target="_blank" rel="noopener noreferrer" class="hover:text-rcb-gold transition-colors flex items-center gap-1">
+          <i class="fa-brands fa-instagram text-pink-500"></i> @alfi_n6070
+        </a>
+        <span>&bull;</span>
+        <span class="text-rcb-gold font-semibold">DOB: 13/09/2011</span>
+      </div>
+
+      <p class="text-gray-400 font-mono text-[11px]">Play Bold &bull; #18</p>
+    </div>
+
+    <!-- Developer Credit Section: Nexo Team -->
+    <div class="max-w-5xl mx-auto px-4 pt-4 border-t border-rcb-border/20 flex flex-col sm:flex-row items-center justify-center gap-3 text-xs text-gray-400">
+      <span class="font-medium text-gray-300">
+        Developed by <strong class="text-rcb-gold font-display tracking-wide">Nexo Team</strong>
+      </span>
+      <div class="flex items-center gap-2.5">
+        <a 
+          href="https://www.instagram.com/nexoxdev?bqrl=dHRkNDh3cDlsOTNr" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="inline-flex items-center gap-1.5 bg-rcb-card hover:bg-rcb-cardhover border border-pink-500/30 text-pink-400 hover:text-pink-300 px-3 py-1 rounded-full text-[11px] font-semibold transition-all"
+        >
+          <i class="fa-brands fa-instagram"></i> @nexoxdev
+        </a>
+        <a 
+          href="https://t.me/NexoDeveloper" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="inline-flex items-center gap-1.5 bg-rcb-card hover:bg-rcb-cardhover border border-sky-500/30 text-sky-400 hover:text-sky-300 px-3 py-1 rounded-full text-[11px] font-semibold transition-all"
+        >
+          <i class="fa-brands fa-telegram"></i> t.me/NexoDeveloper
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MAIN SCRIPT LOGIC -->
+  <script>
+    // --- STATE MANAGEMENT ---
+    const STATE = {
+      avatarPreset: localStorage.getItem('alfin_avatar_preset') || 'insta',
+      customAvatar: localStorage.getItem('alfin_custom_avatar') || null,
+      isMusicPlaying: false,
+      userPausedMusic: false
+    };
+
+    // Virat Kohli Motivational Quotes
+    const KOHLI_QUOTES = [
+      "Self-belief and hard work will always earn you success.",
+      "As a cricketer, you have to be fearless. Whatever you do, do it with passion.",
+      "Never give up, keep trying until the last ball is bowled.",
+      "In cricket, every day is a new challenge and a new opportunity to excel.",
+      "Play Bold. Play with your heart!"
+    ];
+
+    // Initialize application on load
+    window.addEventListener('DOMContentLoaded', () => {
+      calculateAgeAndCountdown();
+      setInterval(calculateAgeAndCountdown, 60000); // refresh every minute
+      loadAvatarState();
+      initAnimatedStadiumCanvas();
+      setupMobileAudioUnlock();
+    });
+
+    // --- TOAST NOTIFICATIONS ---
+    function showToast(message, color = 'gold') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      
+      const borderColor = color === 'red' ? 'border-rcb-red' : 'border-rcb-gold';
+      const textColor = color === 'red' ? 'text-red-400' : 'text-rcb-gold';
+      
+      toast.className = `pointer-events-auto bg-rcb-card ${borderColor} border text-xs font-semibold px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 transform translate-y-2 opacity-0 transition-all duration-300 max-w-xs`;
+      toast.innerHTML = `<span class="${textColor}">${message}</span>`;
+      
+      container.appendChild(toast);
+      
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      });
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // --- EXACT AGE & BIRTHDAY COUNTDOWN CALCULATOR ---
+    function calculateAgeAndCountdown() {
+      const birthDate = new Date(2011, 8, 13); // 13th September 2011 (month index 8)
+      const now = new Date();
+
+      // 1. Calculate Exact Age (Years, Months, Days)
+      let years = now.getFullYear() - birthDate.getFullYear();
+      let months = now.getMonth() - birthDate.getMonth();
+      let days = now.getDate() - birthDate.getDate();
+
+      if (days < 0) {
+        months--;
+        // Get number of days in previous month
+        const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+        days += prevMonth.getDate();
+      }
+
+      if (months < 0) {
+        years--;
+        months += 12;
+      }
+
+      const ageElem = document.getElementById('calculatedAge');
+      if (ageElem) {
+        ageElem.textContent = `${years} yrs, ${months} mos, ${days} days`;
+      }
+
+      // 2. Next Birthday Countdown
+      let nextBday = new Date(now.getFullYear(), 8, 13);
+      if (now > nextBday && (now.getMonth() !== 8 || now.getDate() !== 13)) {
+        nextBday.setFullYear(now.getFullYear() + 1);
+      }
+
+      const diffTime = nextBday - now;
+      const bdayElem = document.getElementById('bdayCountdown');
+
+      if (diffTime <= 0 && now.getMonth() === 8 && now.getDate() === 13) {
+        if (bdayElem) bdayElem.textContent = '🎉 Happy Birthday Alfin! 🎂';
+      } else {
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        if (bdayElem) bdayElem.textContent = `In ${diffDays} days (Sept 13)`;
+      }
+    }
+
+    // --- NATIVE WEB AUDIO API SYNTHESIZER (MOBILE & DESKTOP RELIABLE) ---
+    let audioCtx = null;
+    let synthLoopId = null;
+    let isSynthRunning = false;
+
+    function initAudioContext() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+      }
+    }
+
+    function playToneNote(freq, type, duration, startTime, gainVal = 0.15) {
+      if (!audioCtx || audioCtx.state !== 'running') return;
+      
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, startTime);
+
+      gain.gain.setValueAtTime(gainVal, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start(startTime);
+      osc.stop(startTime + duration);
+    }
+
+    function playDrumKick(startTime) {
+      if (!audioCtx || audioCtx.state !== 'running') return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.frequency.setValueAtTime(130, startTime);
+      osc.frequency.exponentialRampToValueAtTime(0.01, startTime + 0.25);
+      gain.gain.setValueAtTime(0.4, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.25);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(startTime);
+      osc.stop(startTime + 0.25);
+    }
+
+    function playAnthemBeat() {
+      if (!isSynthRunning || !audioCtx) return;
+
+      const tempo = 112; 
+      const stepTime = 60 / tempo / 2; // 8th note duration
+      let currentStep = 0;
+
+      // Note frequencies (in Hz)
+      const NOTES = {
+        D3: 146.83, F3: 174.61, A3: 220.00, D4: 293.66,
+        Bb2: 116.54, F4: 349.23, G4: 392.00, A4: 440.00,
+        C4: 261.63, E4: 329.63, C5: 523.25, D5: 587.33
+      };
+
+      const score = [
+        { note: NOTES.D4, chord: [NOTES.D3, NOTES.F3, NOTES.A3], kick: true },
+        { note: NOTES.F4, chord: null, kick: false },
+        { note: NOTES.G4, chord: [NOTES.D3, NOTES.F3, NOTES.A3], kick: true },
+        { note: NOTES.A4, chord: null, kick: false },
+        { note: NOTES.D5, chord: [NOTES.Bb2, NOTES.D3, NOTES.F3], kick: true },
+        { note: NOTES.C5, chord: null, kick: false },
+        { note: NOTES.A4, chord: [NOTES.C4, NOTES.E4, NOTES.G4], kick: true },
+        { note: NOTES.G4, chord: null, kick: true }
+      ];
+
+      function scheduleNextSequence() {
+        if (!isSynthRunning) return;
+        const now = audioCtx.currentTime;
+        
+        score.forEach((step, idx) => {
+          const time = now + (idx * stepTime);
+          if (step.kick) playDrumKick(time);
+          if (step.note) playToneNote(step.note, 'sawtooth', stepTime * 1.5, time, 0.12);
+          if (step.chord) {
+            step.chord.forEach(f => playToneNote(f, 'triangle', stepTime * 2, time, 0.08));
+          }
+        });
+
+        synthLoopId = setTimeout(scheduleNextSequence, score.length * stepTime * 1000);
+      }
+
+      scheduleNextSequence();
+    }
+
+    async function startAudioEngine(silent = false) {
+      initAudioContext();
+      if (audioCtx.state === 'suspended') {
+        await audioCtx.resume();
+      }
+      if (!isSynthRunning) {
+        isSynthRunning = true;
+        playAnthemBeat();
+        updateMusicUI(true);
+        if (!silent) showToast('🎵 Playing Stadium Anthem Music', 'gold');
+      }
+    }
+
+    function stopAudioEngine() {
+      isSynthRunning = false;
+      if (synthLoopId) clearTimeout(synthLoopId);
+      updateMusicUI(false);
+      showToast('⏸️ Music Paused', 'red');
+    }
+
+    function updateMusicUI(playing) {
+      STATE.isMusicPlaying = playing;
+      const icon = document.getElementById('musicIcon');
+      const eq = document.getElementById('musicEqualizer');
+      const heroBtnText = document.getElementById('heroMusicBtnText');
+      const label = document.getElementById('musicLabel');
+
+      if (playing) {
+        if (icon) icon.className = 'fa-solid fa-pause text-[11px]';
+        if (eq) eq.classList.add('playing');
+        if (label) label.textContent = 'Playing';
+        if (heroBtnText) heroBtnText.textContent = 'Pause Stadium Anthem';
+      } else {
+        if (icon) icon.className = 'fa-solid fa-play text-[11px]';
+        if (eq) eq.classList.remove('playing');
+        if (label) label.textContent = 'Play Music';
+        if (heroBtnText) heroBtnText.textContent = 'Play Stadium Anthem';
+      }
+    }
+
+    function toggleBgMusic() {
+      if (STATE.isMusicPlaying) {
+        STATE.userPausedMusic = true;
+        stopAudioEngine();
+      } else {
+        STATE.userPausedMusic = false;
+        startAudioEngine(false);
+      }
+    }
+
+    function setupMobileAudioUnlock() {
+      const unlockEvents = ['pointerdown', 'touchstart', 'click', 'keydown'];
+      const onFirstGesture = async () => {
+        if (!STATE.isMusicPlaying && !STATE.userPausedMusic) {
+          try {
+            await startAudioEngine(true);
+          } catch (e) {
+            // Browser autoplay restrictions
+          }
+        }
+        if (STATE.isMusicPlaying) {
+          unlockEvents.forEach(evt => document.removeEventListener(evt, onFirstGesture));
+        }
+      };
+      unlockEvents.forEach(evt => document.addEventListener(evt, onFirstGesture, { passive: true }));
+    }
+
+    // --- FULLSCREEN ANIMATED STADIUM BACKGROUND CANVAS ---
+    function initAnimatedStadiumCanvas() {
+      const canvas = document.getElementById('bgCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      let width = (canvas.width = window.innerWidth);
+      let height = (canvas.height = window.innerHeight);
+
+      window.addEventListener('resize', () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      });
+
+      // Embers Array
+      const emberCount = 45;
+      const embers = Array.from({ length: emberCount }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        radius: Math.random() * 2.5 + 1,
+        color: Math.random() > 0.4 ? '#D4AF37' : '#EC1C24',
+        speedY: Math.random() * 0.8 + 0.3,
+        speedX: (Math.random() - 0.5) * 0.4,
+        alpha: Math.random() * 0.7 + 0.3
+      }));
+
+      // Floating Watermarks (#18 & RCB)
+      const watermarks = [
+        { text: '#18', x: width * 0.15, y: height * 0.3, vx: 0.1, vy: -0.05, opacity: 0.04, size: 120 },
+        { text: 'RCB', x: width * 0.75, y: height * 0.7, vx: -0.08, vy: 0.06, opacity: 0.04, size: 140 }
+      ];
+
+      // Flying Cricket Ball Animation
+      let ball = {
+        x: -50,
+        y: height * 0.8,
+        vx: 4.5,
+        vy: -3.5,
+        gravity: 0.04,
+        radius: 7,
+        trail: []
+      };
+
+      let lightAngle = 0;
+
+      function render() {
+        ctx.clearRect(0, 0, width, height);
+
+        // 1. Rotating Stadium Floodlights Beams
+        lightAngle += 0.005;
+        const lightX1 = width * 0.15 + Math.sin(lightAngle) * 60;
+        const lightX2 = width * 0.85 + Math.cos(lightAngle) * 60;
+
+        // Left Spotlight Beam
+        const grad1 = ctx.createRadialGradient(lightX1, 0, 10, lightX1, height * 0.8, width * 0.4);
+        grad1.addColorStop(0, 'rgba(212, 175, 55, 0.14)');
+        grad1.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = grad1;
+        ctx.fillRect(0, 0, width, height);
+
+        // Right Spotlight Beam
+        const grad2 = ctx.createRadialGradient(lightX2, 0, 10, lightX2, height * 0.8, width * 0.4);
+        grad2.addColorStop(0, 'rgba(236, 28, 36, 0.12)');
+        grad2.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = grad2;
+        ctx.fillRect(0, 0, width, height);
+
+        // 2. Perspective Stadium Pitch Grid Lines
+        ctx.strokeStyle = 'rgba(212, 175, 55, 0.04)';
+        ctx.lineWidth = 1;
+        const horizon = height * 0.65;
+        for (let i = -width; i < width * 2; i += 80) {
+          ctx.beginPath();
+          ctx.moveTo(width / 2 + (i - width / 2) * 0.1, horizon);
+          ctx.lineTo(i, height);
+          ctx.stroke();
+        }
+
+        // 3. Render Floating Watermarks
+        watermarks.forEach(wm => {
+          wm.x += wm.vx;
+          wm.y += wm.vy;
+          if (wm.x < 0 || wm.x > width) wm.vx *= -1;
+          if (wm.y < horizon * 0.3 || wm.y > height) wm.vy *= -1;
+
+          ctx.font = `900 ${wm.size}px Montserrat, sans-serif`;
+          ctx.fillStyle = `rgba(212, 175, 55, ${wm.opacity})`;
+          ctx.fillText(wm.text, wm.x, wm.y);
+        });
+
+        // 4. Render & Update Floating Crimson/Gold Embers
+        embers.forEach(p => {
+          p.y -= p.speedY;
+          p.x += Math.sin(p.y * 0.01) * p.speedX;
+
+          if (p.y < 0) {
+            p.y = height + 10;
+            p.x = Math.random() * width;
+          }
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = p.alpha;
+          ctx.shadowBlur = 8;
+          ctx.shadowColor = p.color;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+          ctx.globalAlpha = 1.0;
+        });
+
+        // 5. Render Flying Cricket Ball with Arc Trail
+        ball.x += ball.vx;
+        ball.y += ball.vy;
+        ball.vy += ball.gravity;
+
+        ball.trail.push({ x: ball.x, y: ball.y });
+        if (ball.trail.length > 18) ball.trail.shift();
+
+        // Draw Trail
+        ctx.beginPath();
+        for (let i = 0; i < ball.trail.length; i++) {
+          const pt = ball.trail[i];
+          const alpha = i / ball.trail.length;
+          ctx.strokeStyle = `rgba(236, 28, 36, ${alpha * 0.5})`;
+          ctx.lineWidth = alpha * 4;
+          if (i === 0) ctx.moveTo(pt.x, pt.y);
+          else ctx.lineTo(pt.x, pt.y);
+        }
+        ctx.stroke();
+
+        // Draw Ball
+        if (ball.x < width + 100 && ball.y < height + 100) {
+          ctx.beginPath();
+          ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+          ctx.fillStyle = '#EC1C24';
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = '#EC1C24';
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        } else {
+          // Reset ball trajectory
+          ball.x = -50;
+          ball.y = height * (0.6 + Math.random() * 0.3);
+          ball.vx = 4 + Math.random() * 2;
+          ball.vy = -3 - Math.random() * 2;
+          ball.trail = [];
+        }
+
+        requestAnimationFrame(render);
+      }
+
+      render();
+    }
+
+    // --- AVATAR PRESET & CUSTOM UPLOADER ---
+    function setAvatarPreset(preset) {
+      STATE.avatarPreset = preset;
+      localStorage.setItem('alfin_avatar_preset', preset);
+      STATE.customAvatar = null;
+      localStorage.removeItem('alfin_custom_avatar');
+      loadAvatarState();
+      showToast(`Avatar updated: ${preset.toUpperCase()}`, 'gold');
+    }
+
+    function loadAvatarState() {
+      const customImg = document.getElementById('customAvatarImg');
+      const avatarText = document.getElementById('avatarText');
+
+      if (STATE.customAvatar) {
+        customImg.src = STATE.customAvatar;
+        customImg.classList.remove('hidden');
+        avatarText.classList.add('hidden');
+        return;
+      }
+
+      customImg.classList.add('hidden');
+      avatarText.classList.remove('hidden');
+
+      switch (STATE.avatarPreset) {
+        case 'cricket':
+          avatarText.innerHTML = '<span class="text-5xl md:text-6xl">🏏</span>';
+          break;
+        case 'lion':
+          avatarText.innerHTML = '<span class="text-5xl md:text-6xl">🦁</span>';
+          break;
+        case 'crown':
+          avatarText.innerHTML = '<span class="text-5xl md:text-6xl">👑</span>';
+          break;
+        case 'insta':
+        default:
+          avatarText.innerHTML = `
+            <i class="fa-brands fa-instagram text-4xl md:text-5xl text-white drop-shadow-md mb-1"></i>
+            <span class="font-display font-extrabold text-xs md:text-sm text-rcb-gold tracking-tight">@alfi_n6070</span>
+          `;
+          break;
+      }
+    }
+
+    document.getElementById('avatarUploadInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      if (file.size > 3 * 1024 * 1024) {
+        showToast("Please choose an image under 3MB", "red");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        STATE.customAvatar = evt.target.result;
+        localStorage.setItem('alfin_custom_avatar', STATE.customAvatar);
+        loadAvatarState();
+        showToast("Custom profile photo updated!", "gold");
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // --- VIRAT KOHLI RANDOM QUOTE TOAST ---
+    let quoteIdx = 0;
+    function showKohliQuote() {
+      quoteIdx = (quoteIdx + 1) % KOHLI_QUOTES.length;
+      showToast(`👑 "${KOHLI_QUOTES[quoteIdx]}"`, 'gold');
+    }
+  </script>
+</body>
+</html>
